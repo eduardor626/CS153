@@ -45,5 +45,5 @@ main(int argc, char *argv[])
 
   wait();
 // Testing Server
-  exit();
+  exit(1);
 }
