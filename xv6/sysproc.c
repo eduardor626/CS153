@@ -14,14 +14,13 @@ sys_fork(void)
 }
 
 int
-sys_exit(void)
+sys_exit(int status)
 {
-  int n;
-	
-  // sanity check for status code n
-  if(argint(0, &n) < 0)
+ 	
+  // sanity check for status code 
+  if(argint(0, &status) < 0)
     return -1;
-  exit(n); //exit with status code
+  exit(status); //exit with status 
   return 0; 
 }
 

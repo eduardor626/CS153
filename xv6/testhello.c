@@ -4,5 +4,5 @@
 
 int main(int argc, char *argv[]) {
 	hello();
-	exit(1);
+	exit(0);
 }
