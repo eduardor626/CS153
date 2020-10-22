@@ -14,9 +14,9 @@ sys_fork(void)
 }
 
 int
-sys_exit(int status)
+sys_exit(void)
 {
- 	
+ 	int status;
   // sanity check for status code 
   if(argint(0, &status) < 0)
     return -1;
@@ -27,8 +27,31 @@ sys_exit(int status)
 int
 sys_wait(void)
 {
-  return wait();
+  int* n;
+  if(argptr(0, (void*) &n, sizeof(*n)) < 0)
+    return -1;
+  return wait(n);
 }
+
+//Adding the waitpid function
+int 
+sys_waitpid(int pid, int* status, int options)   {
+
+  //process does not exist
+  if(argint(0, &pid ) < 0)   {
+      return -1;
+  }
+  //unexpected errors that may occur
+  if(argptr(1, (void*)&status, sizeof(int*)) < 0)   {
+      return -1;
+  }
+  if(argint(2, &options) < 0)   {
+      return -1;
+  }
+  //passed all checks
+  return waitpid(pid, status, options);
+}
+
 
 int
 sys_kill(void)

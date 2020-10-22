@@ -25,6 +25,9 @@ int sleep(int);
 int uptime(void);
 //hello system call
 int hello(void);
+//wait system call
+int waitpid(int, int *, int);
+
 
 // ulib.c
 int stat(const char*, struct stat*);
