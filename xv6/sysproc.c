@@ -27,10 +27,10 @@ sys_exit(void)
 int
 sys_wait(void)
 {
-  int* n;
-  if(argptr(0, (void*) &n, sizeof(*n)) < 0)
+  int* status;
+  if(argptr(0, (void*) &status, sizeof(*status)) < 0)
     return -1;
-  return wait(n);
+  return wait(status);
 }
 
 //Adding the waitpid function
