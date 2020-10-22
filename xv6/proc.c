@@ -317,8 +317,6 @@ wait(int *status)
 // required only to implement a blocking waitpid where the kernel 
 // prevents the current process from execution until a process with 
 // the given pid terminates.
-// Wait for process with passed in pid to terminate
-// Return -1 if this process does not exist or if there was an error
 int
 waitpid(int pid, int* status, int options)
 {
