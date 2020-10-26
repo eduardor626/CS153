@@ -27,6 +27,8 @@ int uptime(void);
 int hello(void);
 //wait system call
 int waitpid(int, int *, int);
+//function to test lab1
+int lab1(void);
 
 
 // ulib.c

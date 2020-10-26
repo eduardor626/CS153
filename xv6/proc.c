@@ -334,7 +334,6 @@ waitpid(int pid, int* status, int options)
       }
       havekids = 1;
       if(p->state == ZOMBIE){
-        // Found one.
         *status = p->exitstatus;
         newpid = p->pid;
         kfree(p->kstack);
@@ -349,11 +348,11 @@ waitpid(int pid, int* status, int options)
 	      return newpid;
       }
     }
-    //maybe for extra credit?
-    // if(options == 1 && p->state != ZOMBIE)   {
-    //   release(&ptable.lock);
-    //   return 0;
-    // }
+
+    if(options == 1 && p->state != ZOMBIE)   {
+      release(&ptable.lock);
+      return 0;
+    }
 
 
     // No point waiting if we don't have any children.

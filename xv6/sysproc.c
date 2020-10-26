@@ -123,3 +123,7 @@ sys_hello(void)
 	cprintf("hello from the kernel\n");
 	return 0;
 }
+
+int sys_lab1(void){
+    return 0;
+}
