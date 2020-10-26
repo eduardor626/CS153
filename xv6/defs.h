@@ -120,6 +120,7 @@ void            sleep(void*, struct spinlock*);
 void            userinit(void);
 //modifying the wait to take int param
 int             wait(int *status);
+int             waitpid(int pid, int* status, int options);
 void            wakeup(void*);
 void            yield(void);
 

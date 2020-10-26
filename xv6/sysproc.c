@@ -14,28 +14,26 @@ sys_fork(void)
 }
 
 int
-sys_exit(void)
+sys_exit(int status)
 {
- 	int status;
   // sanity check for status code 
   if(argint(0, &status) < 0)
     return -1;
+  myproc()->exitStatus = status;
   exit(status); //exit with status 
   return 0; 
 }
 
 int
-sys_wait(void)
+sys_wait(int* status)
 {
-  int* status;
   if(argptr(0, (void*) &status, sizeof(*status)) < 0)
     return -1;
   return wait(status);
 }
 
 //Adding the waitpid function
-int 
-sys_waitpid(int pid, int* status, int options)   {
+int  sys_waitpid(int pid, int* status, int options)   {
 
   //process does not exist
   if(argint(0, &pid ) < 0)   {

@@ -334,7 +334,7 @@ waitpid(int pid, int* status, int options)
       }
       havekids = 1;
       if(p->state == ZOMBIE){
-        *status = p->exitstatus;
+        *status = p->exitStatus;
         newpid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
