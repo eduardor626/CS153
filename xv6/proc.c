@@ -347,13 +347,12 @@ waitpid(int pid, int* status, int options)
         release(&ptable.lock);
 	      return newpid;
       }
-    }
+      else if(options == 1 && p->state != ZOMBIE)   {
+         release(&ptable.lock);
+          return 0;
+      }
 
-    if(options == 1 && p->state != ZOMBIE)   {
-      release(&ptable.lock);
-      return 0;
     }
-
 
     // No point waiting if we don't have any children.
     if(!havekids || curproc->killed){
