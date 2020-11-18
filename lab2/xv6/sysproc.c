@@ -99,3 +99,7 @@ sys_setpriority(int priority)
     }
     return setpriority(priority);
 }
+
+int sys_lab2(void){
+    return 0;
+}

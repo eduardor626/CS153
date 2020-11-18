@@ -105,6 +105,8 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 //adding the set priority call
 extern int sys_setpriority(void);
+extern int sys_lab2(void);
+
 
 
 static int (*syscalls[])(void) = {
@@ -130,6 +132,7 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_setpriority] sys_setpriority,
+[SYS_lab2]    sys_lab2,
 };
 
 void

@@ -38,4 +38,4 @@ void* malloc(uint);
 void free(void*);
 int atoi(const char*);
 int setpriority(int priority);
-
+int lab2(void);
