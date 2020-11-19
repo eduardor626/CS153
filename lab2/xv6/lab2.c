@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 
 	if(pid > 0) {
 		for (i = 0; i <  3; i++) {
-			wait();
+			wait(0);
 
 		}
                      printf(1,"\n if processes with highest priority finished first then its correct \n");
