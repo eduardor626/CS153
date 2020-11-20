@@ -37,5 +37,7 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+//adding set priority function
 int setpriority(int priority);
+//adding test for lab2 function
 int lab2(void);

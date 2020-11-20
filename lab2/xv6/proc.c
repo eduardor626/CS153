@@ -325,6 +325,7 @@ int wait(void)
 int setpriority(int priority)
 {
   struct proc *p = myproc();
+  //bounds check to modify priority
   if (priority > 31)
   {
     priority = 31;
@@ -334,6 +335,7 @@ int setpriority(int priority)
     priority = 0;
   }
   p->priority = priority;
+
   return p->priority;
 }
 
@@ -345,6 +347,7 @@ int setpriority(int priority)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
+
 void scheduler(void)
 {
   struct proc *p;
@@ -360,6 +363,7 @@ void scheduler(void)
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     p = ptable.proc;
+    //iterate through all the processes in ptable
     while (p < &ptable.proc[NPROC])
     {
       if (p->state != RUNNABLE)
@@ -367,7 +371,7 @@ void scheduler(void)
         p++;
         continue;
       }
-      //find the lowest priority process
+      // find the lowest priority process
       for (minProc = ptable.proc; minProc < &ptable.proc[NPROC]; minProc++)
       {
         if (minProc->state != RUNNABLE)
@@ -386,28 +390,36 @@ void scheduler(void)
       switchuvm(p);
       p->state = RUNNING;
 
-      swtch(&(c->scheduler), p->context);
+      // now we have the minimuim inside of p after the for loop
+      swtch(&(c->scheduler), p->context); //context switch
       switchkvm();
 
       // Process is done running for now.
       // It should have changed its p->state before coming back.
       c->proc = 0;
 
-      //Starvation assignment changes. 
-      for(minProc=ptable.proc; minProc < &ptable.proc[NPROC]; minProc++)   {
-            if(minProc == p)   {
-                 if(minProc->priority < 31)   {
-		     minProc->priority += 1;
-                 }
-            }
-            else   {
-               if(minProc->state == RUNNABLE)   {
-                   if(minProc->priority > 0)
-                      minProc->priority -= 1;
-	              } 
-            } 
-      }  
-
+      //Starvation assignment changes
+      // If a process waits increase its priority. When it runs, decrease it.
+      for (minProc = ptable.proc; minProc < &ptable.proc[NPROC]; minProc++)
+      {
+        if (minProc == p)
+        {
+          if (minProc->priority < 31)
+          {
+            // we've seen process so decrease priority
+            minProc->priority += 1;
+          }
+        }
+        else
+        {
+          if (minProc->state == RUNNABLE)
+          {
+            if (minProc->priority > 0)
+            // lowering priority to increase priority 
+              minProc->priority -= 1;
+          }
+        }
+      }
     }
     release(&ptable.lock);
   }

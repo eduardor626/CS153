@@ -49,7 +49,7 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  int priority;                // Newly added variable that holds the value
+  int priority;                // Adding priority attribute to process (0-31)
 
 };
 
