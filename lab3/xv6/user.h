@@ -25,6 +25,7 @@ int sleep(int);
 int uptime(void);
 int shm_open(int, char **);
 int shm_close(int);
+int lab3(void);
 
 // ulib.c
 int stat(char*, struct stat*);
