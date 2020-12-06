@@ -13,7 +13,7 @@ struct gatedesc idt[256];
 extern uint vectors[];  // in vectors.S: array of 256 entry pointers
 struct spinlock tickslock;
 uint ticks;
-
+uint faultAddress;
 void
 tvinit(void)
 {
@@ -77,6 +77,27 @@ trap(struct trapframe *tf)
             cpuid(), tf->cs, tf->eip);
     lapiceoi();
     break;
+/*Lab3 changes below*/
+
+/* error checking for the faultAddress is vaild, we need to allocate more pages for the stack. 
+  We can do this by building from the address we had a trap occur - PGSIZE, up to the faultAddress. 
+  This would allocate a new page for the stack, and allow us to update the number of number of pages the 
+  stack current has.*/
+  
+  case T_PGFLT:
+   if((faultAddress = rcr2()) == -1)   {
+      myproc()->killed = -1;
+      break;
+   }
+   if(allocuvm(myproc()->pgdir, faultAddress - PGSIZE, faultAddress) == 0 )   {
+        myproc()->killed = 1;
+        exit();
+   }
+   myproc()->pageNum += 1;
+   cprintf("case T_PGFLT from trap.c: allocuvm succeeded. Number of pages allocuvm %d\n", myproc()->pageNum); 
+   break;
+
+/*Lab3 changes above*/
 
   //PAGEBREAK: 13
   default:

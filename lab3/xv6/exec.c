@@ -7,6 +7,14 @@
 #include "x86.h"
 #include "elf.h"
 
+/*
+Opens the executable file and parses it. 
+
+program memory map is determined by how we load the program 
+into memory and set up the page table (so that they are pointing 
+to the right physical pages). This is all implemented in exec.c
+*/
+
 int
 exec(char *path, char **argv)
 {
@@ -62,11 +70,13 @@ exec(char *path, char **argv)
 
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
+  curproc->pageNum = 1;
   sz = PGROUNDUP(sz);
-  if((sz = allocuvm(pgdir, sz, sz + 2*PGSIZE)) == 0)
+
+// changes for lab 3 allow for the stack to be built right below the Kernal address space.  
+  if((sp = allocuvm(pgdir, STACK_TOP - PGSIZE, STACK_TOP)) == 0)
     goto bad;
-  clearpteu(pgdir, (char*)(sz - 2*PGSIZE));
-  sp = sz;
+// ---- end of changes
 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {

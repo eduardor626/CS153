@@ -13,37 +13,43 @@
 // library system call function. The saved user %esp points
 // to a saved program counter, and then the first argument.
 
+
+//Lab 3 change#1
 // Fetch the int at addr from the current process.
 int
 fetchint(uint addr, int *ip)
 {
-  struct proc *curproc = myproc();
+  // Since we changed where the stack exists, 
+  // sz is no longer able to tell us
+  // where the stack is sitting.
 
-  if(addr >= curproc->sz || addr+4 > curproc->sz)
+  if(addr >= STACK_TOP || addr+4 > STACK_TOP)
     return -1;
   *ip = *(int*)(addr);
   return 0;
-}
+}// -- end of lab 3 change
 
 // Fetch the nul-terminated string at addr from the current process.
 // Doesn't actually copy the string - just sets *pp to point at it.
 // Returns length of string, not including nul.
+
+//Lab 3 change#2 
 int
 fetchstr(uint addr, char **pp)
 {
   char *s, *ep;
-  struct proc *curproc = myproc();
 
-  if(addr >= curproc->sz)
+  if(addr >= STACK_TOP)
     return -1;
   *pp = (char*)addr;
-  ep = (char*)curproc->sz;
+  ep = (char*)STACK_TOP;
   for(s = *pp; s < ep; s++){
     if(*s == 0)
       return s - *pp;
   }
   return -1;
-}
+} // end of lab3 change -- 
+
 
 // Fetch the nth 32-bit system call argument.
 int
@@ -52,6 +58,8 @@ argint(int n, int *ip)
   return fetchint((myproc()->tf->esp) + 4 + 4*n, ip);
 }
 
+
+// Lab3 change#3
 // Fetch the nth word-sized system call argument as a pointer
 // to a block of memory of size bytes.  Check that the pointer
 // lies within the process address space.
@@ -59,15 +67,14 @@ int
 argptr(int n, char **pp, int size)
 {
   int i;
-  struct proc *curproc = myproc();
  
   if(argint(n, &i) < 0)
     return -1;
-  if(size < 0 || (uint)i >= curproc->sz || (uint)i+size > curproc->sz)
+  if(size < 0 || (uint)i >= STACK_TOP || (uint)i+size > STACK_TOP)
     return -1;
   *pp = (char*)i;
   return 0;
-}
+}// end of lab3 change
 
 // Fetch the nth word-sized system call argument as a string pointer.
 // Check that the pointer is valid and the string is nul-terminated.
@@ -106,6 +113,7 @@ extern int sys_uptime(void);
 
 extern int sys_shm_open(void);
 extern int sys_shm_close(void);
+extern int sys_lab3(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -130,7 +138,8 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_shm_open] sys_shm_open,
-[SYS_shm_close] sys_shm_close
+[SYS_shm_close] sys_shm_close,
+[SYS_lab3] sys_lab3
 };
 
 void

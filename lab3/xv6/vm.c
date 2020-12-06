@@ -317,11 +317,12 @@ copyuvm(pde_t *pgdir, uint sz)
 {
   pde_t *d;
   pte_t *pte;
-  uint pa, i, flags;
+  uint pa, i, x, flags;
   char *mem;
 
   if((d = setupkvm()) == 0)
     return 0;
+
   for(i = 0; i < sz; i += PGSIZE){
     if((pte = walkpgdir(pgdir, (void *) i, 0)) == 0)
       panic("copyuvm: pte should exist");
@@ -332,9 +333,36 @@ copyuvm(pde_t *pgdir, uint sz)
     if((mem = kalloc()) == 0)
       goto bad;
     memmove(mem, (char*)P2V(pa), PGSIZE);
-    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0)
-      goto bad;
+    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0) {
+      kfree(mem);
+      goto bad; 
+    }
   }
+
+/*Lab 3 Changes below*/
+
+  /*In this case we have a loop similar to the initial loop in copyuvm. 
+  However, we make sure that we iterate over the stack pages. 
+  This is done by placing the starting position at the bottom of the stack 
+  (Which should be STACK_TOP - However many pages for your stack)
+  and iterating up to STACK_TOP.*/
+  for(x = PGROUNDUP(STACK_TOP - (PGSIZE*myproc()->pageNum)); x < STACK_TOP; x += PGSIZE){
+    if((pte = walkpgdir(pgdir, (void *) x, 0)) == 0)
+      panic("copyuvm: pte should exist");
+    if(!(*pte & PTE_P))
+      panic("copyuvm: page not present");
+    pa = PTE_ADDR(*pte);
+    flags = PTE_FLAGS(*pte);
+    if((mem = kalloc()) == 0)
+      goto bad;
+    memmove(mem, (char*)P2V(pa), PGSIZE);
+    if(mappages(d, (void*)x, PGSIZE, V2P(mem), flags) < 0) {
+      kfree(mem);
+      goto bad;
+    }
+  }
+/*Lab 3 Changes above*/
+
   return d;
 
 bad:
