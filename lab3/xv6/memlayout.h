@@ -8,7 +8,7 @@
 #define KERNBASE 0x80000000         // First kernel virtual address
 #define KERNLINK (KERNBASE+EXTMEM)  // Address where kernel is linked
 
-// Lab3 changes
+// Lab3 changes allow for the stack to be built right below the Kernal address space.
 #define STACK_TOP (KERNBASE-1) // now the stack is at the top
 
 #define V2P(a) (((uint) (a)) - KERNBASE)

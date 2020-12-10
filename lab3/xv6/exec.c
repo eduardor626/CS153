@@ -74,6 +74,10 @@ exec(char *path, char **argv)
   sz = PGROUNDUP(sz);
 
 // changes for lab 3 allow for the stack to be built right below the Kernal address space.  
+//changed the arguments given to allocuvm
+// second is starting point to grow from
+// third is ending point
+// if == 0 then we have an error
   if((sp = allocuvm(pgdir, STACK_TOP - PGSIZE, STACK_TOP)) == 0)
     goto bad;
 // ---- end of changes

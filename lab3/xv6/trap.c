@@ -79,10 +79,12 @@ trap(struct trapframe *tf)
     break;
 /*Lab3 changes below*/
 
-/* error checking for the faultAddress is vaild, we need to allocate more pages for the stack. 
-  We can do this by building from the address we had a trap occur - PGSIZE, up to the faultAddress. 
-  This would allocate a new page for the stack, and allow us to update the number of number of pages the 
-  stack current has.*/
+/* 
+  1) checking for error in faultAddress, 
+  2) we need to allocate more pages for the stack. 
+  3) We do this by using the address we had a trap occur - PGSIZE, up to the faultAddress 
+  4) This allocates a new page for the stack, and allow us to update the number of number of pages the stack has.
+  */
   
   case T_PGFLT:
    if((faultAddress = rcr2()) == -1)   {
@@ -94,7 +96,7 @@ trap(struct trapframe *tf)
         exit();
    }
    myproc()->pageNum += 1;
-   cprintf("case T_PGFLT from trap.c: allocuvm succeeded. Number of pages allocuvm %d\n", myproc()->pageNum); 
+   cprintf("Increased Stack Size. Number of pages allocuvm %d\n", myproc()->pageNum); 
    break;
 
 /*Lab3 changes above*/
